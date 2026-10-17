@@ -1,0 +1,10 @@
+services:
+  app:
+    ports:
+    - 127.0.0.1:8116:3000
+    environment:
+      CMD_DOMAIN: localhost
+      CMD_PROTOCOL_USESSL: 'false'
+      CMD_URL_ADDPORT: 'true'
+      CMD_PORT: '3000'
+      CMD_HSTS_ENABLE: 'false'

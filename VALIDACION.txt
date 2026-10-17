@@ -1,0 +1,1 @@
+Validación local: YAML, AST Python y node --check correctos. Pruebas con fixtures: manifiesto íntegro aceptado; archivo alterado y tar con traversal rechazados; restauración bloqueada antes de escrituras con destino activo simulado. No se ejecutó Docker, app, TLS ni restauración real. Aplicar docs/ACEPTACION.md en servidor.

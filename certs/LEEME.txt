@@ -1,0 +1,1 @@
+Descargar CA del proyecto Supabase desde su panel. Guardar como ca.crt. No desactivar validacion TLS.

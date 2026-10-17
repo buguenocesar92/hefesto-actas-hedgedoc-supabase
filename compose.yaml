@@ -1,0 +1,59 @@
+name: hefesto-actas
+services:
+  app:
+    image: quay.io/hedgedoc/hedgedoc:1.12.0@sha256:cd66986a2a49b57c9bd3677ec76409adf84f412263e8c0f96e6854863f1dd689
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      CMD_CONFIG_FILE: /ops/config.cjs
+      CMD_DOMAIN: ${DOMAIN:?Definir DOMAIN}
+      CMD_PROTOCOL_USESSL: 'true'
+      CMD_URL_ADDPORT: 'false'
+      CMD_HSTS_ENABLE: 'true'
+      CMD_SESSION_SECRET: ${SESSION_SECRET:?Generar secreto}
+      CMD_ALLOW_ANONYMOUS: 'false'
+      CMD_ALLOW_ANONYMOUS_EDITS: 'false'
+      CMD_ALLOW_FREEURL: 'false'
+      CMD_DEFAULT_PERMISSION: private
+      CMD_EMAIL: 'true'
+      CMD_ALLOW_EMAIL_REGISTER: 'false'
+      CMD_ALLOW_GRAVATAR: 'false'
+      CMD_ENABLE_UPLOADS: registered
+      CMD_IMAGE_UPLOAD_TYPE: filesystem
+      CMD_DB_HOST: ${DB_HOST:?Definir host}
+      CMD_DB_PORT: '5432'
+      CMD_DB_DATABASE: postgres
+      CMD_DB_USERNAME: hedgedoc_app
+      CMD_DB_PASSWORD: ${DB_PASSWORD:?Definir clave}
+      CMD_DB_DIALECT: postgres
+    volumes:
+    - uploads:/hedgedoc/public/uploads
+    - ./ops:/ops:ro
+    - ./certs:/certs:ro
+    expose:
+    - '3000'
+  dbtools:
+    image: postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24
+    profiles:
+    - tools
+    environment:
+      PGHOST: ${DB_HOST}
+      PGPORT: '5432'
+      PGDATABASE: postgres
+      PGUSER: hedgedoc_app
+      PGPASSWORD: ${DB_PASSWORD}
+      PGSSLMODE: verify-full
+      PGSSLROOTCERT: /certs/ca.crt
+    volumes:
+    - ./certs:/certs:ro
+  filetools:
+    image: postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24
+    profiles:
+    - tools
+    user: 0:0
+    entrypoint:
+    - sh
+    volumes:
+    - uploads:/files
+volumes:
+  uploads: {}
