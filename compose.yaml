@@ -27,6 +27,7 @@ services:
       CMD_DB_DIALECT: postgres
       CMD_DB_SSLMODE: ${DB_SSLMODE:-verify-full}
       DB_ALLOW_INTERNAL_HOST: ${DB_ALLOW_INTERNAL_HOST:-false}
+      DB_ALLOW_INSECURE_SSL: ${DB_ALLOW_INSECURE_SSL:-false}
     volumes:
     - uploads:/hedgedoc/public/uploads
     - ./ops:/ops:ro

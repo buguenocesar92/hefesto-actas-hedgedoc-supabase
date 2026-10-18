@@ -28,6 +28,7 @@ El compose cumple el contrato del MVP Hefesto para Coolify (servicios sin `profi
 - `DB_USER` (opcional, defecto `hedgedoc_app`): rol con el que HedgeDoc conecta. Coincidir con el creado en `sql/01-admin.sql`.
 - `DB_SSLMODE` (opcional, defecto `verify-full`): modo SSL de Sequelize. Si se usa algo distinto de `verify-full`/`verify-ca`, la CA deja de ser obligatoria y `ops/config.cjs` no aborta al faltarla.
 - `DB_ALLOW_INTERNAL_HOST` (opcional, defecto `false`): permite hosts que no terminen en `.supabase.co`/`.supabase.com`. Útil con bases internas en la misma red Docker; también se acepta implícitamente cuando `DB_SSLMODE=disable`.
+- `DB_ALLOW_INSECURE_SSL` (opcional, defecto `false`): exige `true` para activar `DB_SSLMODE=require` (cifrado sin verificación de CA, vulnerable a MITM). Operador debe confirmarlo explícitamente.
 
 Las cuentas se crean tras las migraciones con la CLI nativa:
 `docker compose exec app /hedgedoc/bin/manage_users --add persona@empresa.cl`.
