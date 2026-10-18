@@ -14,19 +14,19 @@ if (!knownModes.includes(sslMode)) throw new Error('CMD_DB_SSLMODE invalido: ' +
 const hostIsSupabase = process.env.CMD_DB_HOST.endsWith('.supabase.co') || process.env.CMD_DB_HOST.endsWith('.supabase.com');
 const allowInternal = process.env.DB_ALLOW_INTERNAL_HOST === 'true' || sslMode === 'disable';
 if (!hostIsSupabase && !allowInternal) throw new Error('Se requiere host Supabase, no URL');
-const ssl = {};
+// ssl: false en modo disable evita que pg negocie TLS contra una base sin TLS.
+// Cualquier objeto en `ssl` cuenta como verdadero y pg manda la peticion de SSL.
+let ssl;
 if (sslMode === 'verify-full' || sslMode === 'verify-ca') {
-  ssl.require = true;
-  ssl.rejectUnauthorized = true;
-  ssl.ca = fs.readFileSync('/certs/ca.crt', 'utf8');
+  ssl = {require: true, rejectUnauthorized: true, ca: fs.readFileSync('/certs/ca.crt', 'utf8')};
 } else if (sslMode === 'require') {
   // Cifrado sin verificacion de CA: vulnerable a MITM; exige opt-in explicita.
   if (process.env.DB_ALLOW_INSECURE_SSL !== 'true') {
     throw new Error('CMD_DB_SSLMODE=require desactiva la verificacion de CA; usar DB_ALLOW_INSECURE_SSL=true para confirmarlo');
   }
-  ssl.require = true;
-  ssl.rejectUnauthorized = false;
+  ssl = {require: true, rejectUnauthorized: false};
 } else {
-  ssl.require = false;
+  // disable: sin TLS. Sequelize propaga `ssl: false` y pg no negocia SSL.
+  ssl = false;
 }
 module.exports = {production: {db: {dialectOptions: {ssl}}}};
