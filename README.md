@@ -20,3 +20,15 @@ El login local no ofrece MFA ni recuperación automática de contraseña; el ope
 
 ## Entrega y validación
 Se revisaron fuentes oficiales, YAML, sintaxis y guardas locales de integridad/restauración. No hay Docker en el entorno de preparación: falta ejecutar imagen, TLS, migraciones, colaboración, backup y recuperación reales. No se afirma aceptación productiva.
+
+## Despliegue en Coolify (MVP Hefesto)
+El compose cumple el contrato del MVP Hefesto para Coolify (servicios sin `profiles` no publican puertos ni toman poderes de host; sin `name:` fijo). Variables nuevas que el operador define en Coolify:
+
+- `DB_NAME` (opcional, defecto `postgres`): nombre de la base dentro del Postgres compartido. Para multi-app, usar `mvp_<slug>`.
+- `DB_USER` (opcional, defecto `hedgedoc_app`): rol con el que HedgeDoc conecta. Coincidir con el creado en `sql/01-admin.sql`.
+- `DB_SSLMODE` (opcional, defecto `verify-full`): modo SSL de Sequelize. Si se usa algo distinto de `verify-full`/`verify-ca`, la CA deja de ser obligatoria y `ops/config.cjs` no aborta al faltarla.
+- `DB_ALLOW_INTERNAL_HOST` (opcional, defecto `false`): permite hosts que no terminen en `.supabase.co`/`.supabase.com`. Útil con bases internas en la misma red Docker; también se acepta implícitamente cuando `DB_SSLMODE=disable`.
+- `DB_ALLOW_INSECURE_SSL` (opcional, defecto `false`): exige `true` para activar `DB_SSLMODE=require` (cifrado sin verificación de CA, vulnerable a MITM). Operador debe confirmarlo explícitamente.
+
+Las cuentas se crean tras las migraciones con la CLI nativa:
+`docker compose exec app /hedgedoc/bin/manage_users --add persona@empresa.cl`.
