@@ -2,3 +2,17 @@
 certs/ca.crt
 backups/
 __pycache__/
+# Artefactos locales de sesion/agente: nunca versionar.
+.superpowers/
+# Respaldos, estado de despliegue y auditoria: fuera del repositorio.
+respaldos/
+logs/
+*.dump
+*.tar.gz
+*.age
+# Claves privadas de los certificados del kit.
+certs/*.key
+certs/*.pem
+# Plantilla de variables: es la unica que se versiona.
+.env.*
+!.env.example
